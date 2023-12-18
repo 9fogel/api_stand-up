@@ -1,34 +1,18 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
-import { sendData, sendError } from './modules/send-utils.js';
+import { sendData, sendError } from './modules/sendUtils.js';
+import { checkFile } from './modules/checkFile.js';
 
 const PORT = 8080;
 const COMEDIANS = './comedians.json';
 const CLIENTS = './clients.json';
 
-const checkFiles = async () => {
-  try {
-    await fs.access(COMEDIANS);
-  } catch (error) {
-    console.error(`File ${COMEDIANS} not found!`)
-    return false;
-  }
-
-  try {
-    await fs.access(CLIENTS);
-  } catch (error) {
-    await fs.writeFile(CLIENTS, JSON.stringify([]));
-    console.log(`File ${CLIENTS} was created!`)
-    return false;
-  }
-
-  return true;
-}
-
 const startServer = async () => {
-  if (!(await checkFiles())) {
+  if (!(await checkFile(COMEDIANS))) {
     return;
   }
+
+  await checkFile(CLIENTS, true);
 
   http.createServer(async (req, res) => {
     try {
