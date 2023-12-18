@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
+import { sendData, sendError } from './modules/send-utils.js';
 
 const PORT = 8080;
 const COMEDIANS = './comedians.json';
@@ -24,22 +25,6 @@ const checkFiles = async () => {
   return true;
 }
 
-const sendData = (res, data) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  });
-
-  res.end(data);
-}
-
-const sendError = (res, statusCode, errorMessage) => {
-  res.writeHead(statusCode, {
-    'Content-Type': 'text/plain; charset=utf-8',
-  });
-  res.end(errorMessage);
-}
-
 const startServer = async () => {
   if (!(await checkFiles())) {
     return;
@@ -50,21 +35,22 @@ const startServer = async () => {
       const segments = req.url.split('/').filter(Boolean);
 
       if (req.method === 'GET' && segments[0] === 'comedians') {
-          const data = await fs.readFile(COMEDIANS, 'utf-8');
+          const comediansData = await fs.readFile(COMEDIANS, 'utf-8');
+          const comedians = JSON.parse(comediansData);
 
           if (segments.length === 2) {
-            const comedian = JSON.parse(data).find((comedian => comedian.id === segments[1]));
+            const comedian = comedians.find((comedian => comedian.id === segments[1]));
 
             if (!comedian) {
               sendError(res, 404, 'Stand-up comedian not found');
               return;
             }
 
-            sendData(res, JSON.stringify(comedian));
+            sendData(res, comedian);
             return;
           }
 
-          sendData(res, data);
+          sendData(res, comedians);
           return;
       }
 
