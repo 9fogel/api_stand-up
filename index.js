@@ -32,6 +32,7 @@ const startServer = async () => {
 
   http.createServer(async (req, res) => {
     try {
+      res.setHeader('Access-Control-Allow-Origin', '*');
       const segments = req.url.split('/').filter(Boolean);
 
       if (req.method === 'GET' && segments[0] === 'comedians') {
