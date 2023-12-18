@@ -46,32 +46,46 @@ const startServer = async () => {
   }
 
   http.createServer(async (req, res) => {
-    const segments = req.url.split('/').filter(Boolean);
+    try {
+      const segments = req.url.split('/').filter(Boolean);
 
-    if (req.method === 'GET' && segments[0] === 'comedians') {
-      try {
-        const data = await fs.readFile(COMEDIANS, 'utf-8');
+      if (req.method === 'GET' && segments[0] === 'comedians') {
+          const data = await fs.readFile(COMEDIANS, 'utf-8');
 
-        if (segments.length === 2) {
-          const comedian = JSON.parse(data).find((comedian => comedian.id === segments[1]));
+          if (segments.length === 2) {
+            const comedian = JSON.parse(data).find((comedian => comedian.id === segments[1]));
 
-          if (!comedian) {
-            sendError(res, 404, 'Stand-up comedian not found');
+            if (!comedian) {
+              sendError(res, 404, 'Stand-up comedian not found');
+              return;
+            }
+
+            sendData(res, JSON.stringify(comedian));
             return;
           }
 
-          sendData(res, JSON.stringify(comedian));
+          sendData(res, data);
           return;
-        }
-
-        sendData(res, data);
-        return;
-      } catch (error) {
-        console.log(error);
-        sendError(res, 500, `Sorry, server-side error occurred: ${error}`);
       }
-    } else {
+
+      if (req.method === 'POST' && segments[0] === 'clients') {
+        // POST / clients/:ticket
+        // Add client
+      }
+
+      if (req.method === 'GET' && segments[0] === 'clients' && segments.length === 2) {
+        // GET / clients/:ticket
+        // Get client by ticket number
+      }
+
+      if (req.method === 'PATCH' && segments[0] === 'clients' && segments.length === 2) {
+        // PATCH / clients/:ticket
+        // Update client by ticket number
+      }
+
       sendError(res, 404, 'Not found');
+    } catch (error) {
+      sendError(res, 500, `Sorry, server-side error occurred: ${error}`);
     }
   })
     .listen(PORT);
