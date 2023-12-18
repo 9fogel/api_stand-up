@@ -2,6 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs/promises';
 import { sendData, sendError } from './modules/sendUtils.js';
 import { checkFile } from './modules/checkFile.js';
+import { handleComediansRequest } from './modules/handleComediansRequest.js';
 
 const PORT = 8080;
 const COMEDIANS = './comedians.json';
@@ -14,28 +15,16 @@ const startServer = async () => {
 
   await checkFile(CLIENTS, true);
 
+  const comediansData = await fs.readFile(COMEDIANS, 'utf-8');
+  const comedians = JSON.parse(comediansData);
+
   http.createServer(async (req, res) => {
     try {
       res.setHeader('Access-Control-Allow-Origin', '*');
       const segments = req.url.split('/').filter(Boolean);
 
       if (req.method === 'GET' && segments[0] === 'comedians') {
-          const comediansData = await fs.readFile(COMEDIANS, 'utf-8');
-          const comedians = JSON.parse(comediansData);
-
-          if (segments.length === 2) {
-            const comedian = comedians.find((comedian => comedian.id === segments[1]));
-
-            if (!comedian) {
-              sendError(res, 404, 'Stand-up comedian not found');
-              return;
-            }
-
-            sendData(res, comedian);
-            return;
-          }
-
-          sendData(res, comedians);
+          handleComediansRequest(req, res, comedians, segments);
           return;
       }
 
