@@ -19,4 +19,4 @@ export const checkFile = async (path, createIfMissing) => {
   }
 
   return true;
-}
+};

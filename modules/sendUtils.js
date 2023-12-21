@@ -10,4 +10,4 @@ export const sendError = (res, statusCode, errorMessage) => {
     'Content-Type': 'text/plain; charset=utf-8',
   });
   res.end(errorMessage);
-}
+};
