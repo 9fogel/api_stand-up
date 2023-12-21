@@ -46,9 +46,6 @@ const startServer = async () => {
         const ticketNumber = segments[1];
         handleUpdateClient(req, res, ticketNumber);
         return;
-
-        // PATCH / clients/:ticket
-        // Update client by ticket number
       }
 
       sendError(res, 404, 'Not found');

@@ -15,7 +15,7 @@ export const handleClientsRequest = async (req, res, ticketNumber) => {
 
     sendData(res, client);
   } catch (error) {
-    console.error(`Error while request handling: ${error}`);
+    console.error(`Error while client request handling: ${error}`);
     sendError(res, 500, 'Server error while client request handling');
   }
 };
