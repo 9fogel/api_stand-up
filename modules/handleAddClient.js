@@ -45,7 +45,8 @@ export const handleAddClient = (req, res) => {
       await fs.writeFile(CLIENTS, JSON.stringify(clients));
       sendData(res, newClient);
     } catch (error) {
-
+      console.error(`Error while add client request handling: ${error}`);
+      sendError(res, 500, 'Server error while adding new client');
     }
   })
 };
