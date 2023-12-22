@@ -11,7 +11,7 @@ const PORT = 8080;
 const COMEDIANS = './comedians.json';
 export const CLIENTS = './clients.json';
 
-const startServer = async () => {
+const startServer = async (port) => {
   if (!(await checkFile(COMEDIANS))) {
     return;
   }
@@ -21,7 +21,7 @@ const startServer = async () => {
   const comediansData = await fs.readFile(COMEDIANS, 'utf-8');
   const comedians = JSON.parse(comediansData);
 
-  http.createServer(async (req, res) => {
+  const server = http.createServer(async (req, res) => {
     try {
       res.setHeader('Access-Control-Allow-Origin', '*');
       const segments = req.url.split('/').filter(Boolean);
@@ -52,11 +52,22 @@ const startServer = async () => {
     } catch (error) {
       sendError(res, 500, `Sorry, server-side error occurred: ${error}`);
     }
-  })
-    .listen(PORT);
+  });
 
-  console.log(`Server is running on port ${PORT}`);
+  server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is already in use, trying to relaunch using ${port + 1}`);
+      startServer(port + 1);
+    } else {
+      console.error(`An error occurred: ${error}`);
+    }
+
+  });
 };
 
-startServer();
+startServer(PORT);
 
