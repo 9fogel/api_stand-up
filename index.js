@@ -26,6 +26,11 @@ const startServer = async (port) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
       const segments = req.url.split('/').filter(Boolean);
 
+      if (!segments.length) {
+        sendError(res, 404, 'Route not found');
+        return;
+      }
+
       if (req.method === 'GET' && segments[0] === 'comedians') {
           handleComediansRequest(req, res, comedians, segments);
           return;
