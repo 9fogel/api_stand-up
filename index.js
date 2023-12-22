@@ -1,7 +1,7 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
-import { sendData, sendError } from './modules/sendUtils.js';
-import { checkFile } from './modules/checkFile.js';
+import { sendError } from './modules/sendUtils.js';
+import { checkFileExist, createFileIfMissing} from './modules/checkFile.js';
 import { handleComediansRequest } from './modules/handleComediansRequest.js';
 import { handleAddClient } from './modules/handleAddClient.js';
 import { handleClientsRequest } from './modules/handleClientsRequest.js';
@@ -12,11 +12,11 @@ const COMEDIANS = './comedians.json';
 export const CLIENTS = './clients.json';
 
 const startServer = async (port) => {
-  if (!(await checkFile(COMEDIANS))) {
+  if (!(await checkFileExist(COMEDIANS))) {
     return;
   }
 
-  await checkFile(CLIENTS, true);
+  await createFileIfMissing(CLIENTS);
 
   const comediansData = await fs.readFile(COMEDIANS, 'utf-8');
   const comedians = JSON.parse(comediansData);
