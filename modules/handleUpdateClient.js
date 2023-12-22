@@ -46,6 +46,9 @@ export const handleUpdateClient = (req, res, ticketNumber) => {
         sendError(res, 404, `Client with ticketNumber ${ticketNumber} not found`);
       }
 
+      /* Alternative code for updating the client data */
+      // Object.assign(clients[clientIndex], updateClientData);
+
       clients[clientIndex] = {
         ...clients[clientIndex],
         ...updateClientData,
