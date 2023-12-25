@@ -1,9 +1,9 @@
 import { sendData, sendError } from "./sendUtils.js";
 
-export const handleComediansRequest = async (req, res, comedians, segments) => {
+export const handleComediansRequest = async (req, res, comedians, id) => {
   try {
-    if (segments.length === 2) {
-      const comedian = comedians.find((comedian => comedian.id === segments[1]));
+    if (id) {
+      const comedian = comedians.find((comedian => comedian.id === id));
 
       if (!comedian) {
         sendError(res, 404, 'Stand-up comedian not found');

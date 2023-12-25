@@ -31,25 +31,25 @@ const startServer = async (port) => {
         return;
       }
 
-      if (req.method === 'GET' && segments[0] === 'comedians') {
-          handleComediansRequest(req, res, comedians, segments);
+      const [source, id] = segments;
+
+      if (req.method === 'GET' && source === 'comedians') {
+          handleComediansRequest(req, res, comedians, id);
           return;
       }
 
-      if (req.method === 'POST' && segments[0] === 'clients') {
+      if (req.method === 'POST' && source === 'clients') {
         handleAddClient(req, res);
         return;
       }
 
-      if (req.method === 'GET' && segments[0] === 'clients' && segments.length === 2) {
-        const ticketNumber = segments[1];
-        handleClientsRequest(req, res, ticketNumber);
+      if (req.method === 'GET' && source === 'clients' && id) {
+        handleClientsRequest(req, res, id);
         return;
       }
 
-      if (req.method === 'PATCH' && segments[0] === 'clients' && segments.length === 2) {
-        const ticketNumber = segments[1];
-        handleUpdateClient(req, res, ticketNumber);
+      if (req.method === 'PATCH' && source === 'clients' && id) {
+        handleUpdateClient(req, res, id);
         return;
       }
 
